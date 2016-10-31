@@ -1,6 +1,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import pandas as pd
+
+os.chdir("../data/")
 
 cali_data = pd.read_csv('cali_new.txt')
 
