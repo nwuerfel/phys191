@@ -1,9 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-import pandas as pd
 
 os.chdir("../data/")
+
+"""
+import pandas as pd
 
 cali_data = pd.read_csv('cali_new.txt')
 
@@ -14,6 +16,15 @@ V2   = cali_data[[2]]
 plt.plot(mmHg, V1, 'ro')
 plt.plot(mmHg, V2, 'bo')
 plt.show()
+"""
+
+cali_data = np.genfromtxt('cali_new.txt', delimiter=',', skip_header=1)
+
+mmHg = cali_data[:, 0]
+V1   = cali_data[:, 1]
+V2   = cali_data[:, 2]
+
+V3 = V2 / V1
 
 temperature = np.genfromtxt('temperature.txt')
 
