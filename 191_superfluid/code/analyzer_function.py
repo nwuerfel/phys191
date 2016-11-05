@@ -42,9 +42,9 @@ def analyzer(data, form='b'):
     gamma = 0.1 # inital offset
     delta = 0.485
     
-    time = data[500:525, 2]
-    volt = data[500:525, 0]
-    
+    time = data[:, 2]
+    volt = data[:, 0]
+  
     global_min = time.min()
     global_max = time.max()    
     
@@ -52,12 +52,8 @@ def analyzer(data, form='b'):
     local_max = local_min + delta
 
     max_volts  = []
- 
-'''   
-    time_list = list(time)
-    volt_list = list(volt)
-'''
-    plt.axvline(local_min)
+    
+#    plt.axvline(local_min)
     while local_max <= global_max:
         local_list = []
         for i in time:
@@ -69,7 +65,7 @@ def analyzer(data, form='b'):
         max_value = max(local_list)
         max_volts.append(max_value)
         
-        plt.axvline(local_max)
+#        plt.axvline(local_max)
         local_min += delta
         local_max += delta
 
@@ -79,4 +75,44 @@ def analyzer(data, form='b'):
     plt.ylabel('INSERT LABEL (mV)')
     plt.show()
 
-analyzer(a_run_02, 'go')
+def edgefinder(data):
+    
+    time = data[:25, 2]
+    volt = data[:25, 0]
+
+    plt.plot(time, volt, 'go')
+    plt.title('Title')
+    plt.xlabel('Time (s)')
+    plt.ylabel('INSERT LABEL (mV)')
+    plt.show()
+    
+    time_list = list(time)
+    volt_list = list(volt)
+    volt_list.reverse()
+    
+    list_length = len(time_list)
+
+    edge = []
+    comparison = 0
+    saved_point = 0
+    i = 0
+    
+    while i+1 <= list_length-1:
+        y1 = volt_list[i]
+        y2 = volt_list[i+1]
+            
+        working = abs((y1 - y2))
+            
+        if working >= comparison:
+            comparison = working
+            saved_point = y2
+        
+        if working < comparison:
+            edge.append(saved_point)
+            comparison = 0
+        
+        i += 1
+    
+    return edge
+
+print edgefinder(a_run_02)
