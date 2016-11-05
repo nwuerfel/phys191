@@ -1,5 +1,6 @@
 import numpy as np
 import os
+from analyzer_function import PTconverter
 
 data_Dir = '../data/ss_runs/'
 pressures = np.array([12.7, 7.1, 10.8, 17, 21.5, 26, 30, 35])
@@ -10,7 +11,7 @@ def second_sound():
     j = 0;
 
     # use converter when its done
-    temperatures = pressures
+    temperatures = PTconverter(pressures)
 
     for file in os.listdir(data_Dir):
         if file=='.DS_Store':
