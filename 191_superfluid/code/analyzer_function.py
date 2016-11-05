@@ -5,7 +5,16 @@ import os
 # Changes working directory to /data to access datasets
 os.chdir("../data/")
 
-# Datasets
+######################
+### BEGIN DATASETS ###
+######################
+'''
+SECOND SOUND DATA
+'''
+
+'''
+HEAT CAPACITY DATA
+'''
 cali_data = np.genfromtxt('cali_new.txt', delimiter=',', skip_header=1)
 temperature = np.genfromtxt('temperature.txt')
 
@@ -13,11 +22,45 @@ run_01 = np.genfromtxt('run_01.txt')
 run_02 = np.genfromtxt('run_02.txt')
 run_03 = np.genfromtxt('run_03.txt')
 run_04 = np.genfromtxt('run_04.txt')
+run_05 = np.genfromtxt('run_05.txt')
 
 a_run_01 = np.genfromtxt('a_run_01.txt')
 a_run_02 = np.genfromtxt('a_run_02.txt')
 a_run_03 = np.genfromtxt('a_run_03.txt')
 a_run_04 = np.genfromtxt('a_run_04.txt')
+a_run_05 = np.genfromtxt('a_run_05.txt')
+a_run_06 = np.genfromtxt('a_run_06.txt')
+a_run_07 = np.genfromtxt('a_run_07.txt')
+
+he_run_01 = np.genfromtxt('he_run_01.txt') 
+
+b_l_a_run_01 = np.genfromtxt('he_below_l_a_run_01.txt')
+b_l_a_run_02 = np.genfromtxt('he_below_l_a_run_02.txt')
+b_l_run_01   = np.genfromtxt('he_above_l_run_01.txt')
+
+a_l_a_run_01 = np.genfromtxt('he_above_l_a_run_01.txt')
+a_l_a_run_02 = np.genfromtxt('he_above_l_a_run_02.txt')
+######################
+#### END DATASETS ####
+######################
+
+#######################
+### BEGIN FUNCTIONS ###
+#######################
+  
+#######################
+#### END FUNCTIONS ####
+#######################
+
+###################
+### BEGIN PLOTS ###
+###################
+
+###################
+#### END PLOTS ####
+###################
+
+
 
 # Temperature (K) v. Pressure (mTorr) plot
 temp_0 = temperature[:, 0]
