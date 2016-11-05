@@ -11,6 +11,14 @@ os.chdir("../data/")
 '''
 SECOND SOUND DATA
 '''
+ss_run_01 = np.genfromtxt('ss_run_01.txt')
+ss_run_02 = np.genfromtxt('ss_run_02.txt')
+ss_run_03 = np.genfromtxt('ss_run_03.txt')
+ss_run_04 = np.genfromtxt('ss_run_04.txt')
+ss_run_05 = np.genfromtxt('ss_run_05.txt')
+ss_run_06 = np.genfromtxt('ss_run_06.txt')
+ss_run_07 = np.genfromtxt('ss_run_07.txt')
+ss_run_08 = np.genfromtxt('ss_run_08.txt')
 
 '''
 HEAT CAPACITY DATA
@@ -39,7 +47,6 @@ b_l_a_run_02 = np.genfromtxt('he_below_l_a_run_02.txt')
 b_l_run_01   = np.genfromtxt('he_above_l_run_01.txt')
 
 a_l_a_run_01 = np.genfromtxt('he_above_l_a_run_01.txt')
-a_l_a_run_02 = np.genfromtxt('he_above_l_a_run_02.txt')
 ######################
 #### END DATASETS ####
 ######################
