@@ -26,7 +26,7 @@ HEAT CAPACITY
 cali_data = np.genfromtxt('cali_new.txt', delimiter=',', skip_header=1)
 temperature = np.genfromtxt('temperature.txt')
 
-run_01 = np.genfromtxt('run_01.txt')
+drun_01 = np.genfromtxt('run_01.txt')
 run_02 = np.genfromtxt('run_02.txt')
 run_03 = np.genfromtxt('run_03.txt')
 run_04 = np.genfromtxt('run_04.txt')
@@ -61,7 +61,12 @@ a_l_a_run_01 = np.genfromtxt('he_above_l_a_run_01.txt')
 '''
 SECOND SOUND
 '''
+def PTconverter(ls):
+    temp = np.array([])
+    for i in range(len(ls)):
+        np.append(temp, converter(ls[i], 'PT'))
 
+    return temp
 
 '''
 HEAT CAPCAITY
@@ -69,9 +74,7 @@ HEAT CAPCAITY
 def ppFinder(data):
     
     time = data[:, 2]
-    volt = data[:, 0]
-    
-
+    volt = data[:, 0] * (1.662 / 0.16754) # This is in mV
     plt.plot(time, volt, 'g')
     plt.title('Title')
     plt.xlabel('Time (s)')
@@ -104,39 +107,79 @@ def ppFinder(data):
             comparison = 100
         
         i += 1
+            
+    plateau = np.array(plateau)
     
     return plateau
 
-def VPconverter(num):
+def converter(num, con):
+    
+    if con == 'VP':
+        mmHg = cali_data[:, 0]
+        V1   = cali_data[:, 1]
+    
+        maxi_list = []
+        mini_list = []
+    
+        nlist = V1 - num
+    
+        for i in nlist:
+            if i > 0:
+                maxi_list.append(i)
+            else:
+                mini_list.append(i)
+    
+        V_max = min(maxi_list) + num
+        V_min = max(mini_list) + num
+    
+        V1_list = list(V1)
+    
+        P_max = mmHg[V1_list.index(V_max)]
+        P_min = mmHg[V1_list.index(V_min)]
+    
+        slope = (P_max - P_min) / (V_max - V_min)
+    
+        return P_min + slope * (num - V_min)
 
-def PTconverter(num):
-    temp_mTorr = temperature[:, 0]
-    temp_mmHg  = temp_mTorr / 1000
-    temp_K     = temperature[:, 1]
+    if con == 'PT':
+        temp_mTorr = temperature[:, 0]
+        temp_mmHg  = temp_mTorr / 1000
+        temp_K     = temperature[:, 1]
     
-    maxi_list = []
-    mini_list = []
+        maxi_list = []
+        mini_list = []
     
-    nlist = temp_mmHg - num
+        nlist = temp_mmHg - num
     
-    for i in nlist:
-        if i > 0:
-            maxi_list.append(i)
-        else:
-            mini_list.append(i)
+        for i in nlist:
+            if i > 0:
+                maxi_list.append(i)
+            else:
+                mini_list.append(i)
     
-    P_max = min(maxi_list) + num
-    P_min = max(mini_list) + num
+        P_max = min(maxi_list) + num
+        P_min = max(mini_list) + num
     
-    temp_mmHg_list = list(temp_mmHg)
+        temp_mmHg_list = list(temp_mmHg)
     
-    K_max = temp_K[temp_mmHg_list.index(P_max)]
-    K_min = temp_K[temp_mmHg_list.index(P_min)]
+        K_max = temp_K[temp_mmHg_list.index(P_max)]
+        K_min = temp_K[temp_mmHg_list.index(P_min)]
     
-    slope = (K_max - K_min) / (P_max - P_min)
+        slope = (K_max - K_min) / (P_max - P_min)
     
-    return P_min + slope * (num - P_min)
-    
+        return K_min + slope * (num - P_min)
+
+def list_converter(ls):
+    temp = np.array([])
+    for i in range(len(ls)):
+        np.append(temp, converter(converter(ls[i], 'VP'), 'PT'))
+
+    return temp
+
+'''
+def pulseE(string):
+    if string == 'a_run_01':
+'''        
 #######################
 #### END FUNCTIONS ####
 #######################
@@ -160,64 +203,15 @@ plt.plot(temp_mmHg, temp_K, 'g')
 plt.show()
 
 # Calibration data plot
-'''
-# Calibration data plot
 mmHg = cali_data[:, 0]
 V1   = cali_data[:, 1]
 V2   = cali_data[:, 2]
 
-plt.plot(mmHg, V1, 'ro')
-plt.plot(mmHg, V2, 'bo')
+plt.plot(V2, mmHg, 'ro')
 plt.show()
 
 #print("The ratio of V2:V1 without taking offset into account is: {} ").format(V2 / V1)
-'''
+
 ###################
 #### END PLOTS ####
 ###################
-
-'''
-'''
-'''
-JUNK
-'''
-'''
-'''
-
-def analyzer(data, form='b'):    
-    
-    gamma = 0.1 # inital offset
-    delta = 0.485
-    
-    time = data[:, 2]
-    volt = data[:, 0]
-  
-    global_min = time.min()
-    global_max = time.max()    
-    
-    local_min = global_min + gamma
-    local_max = local_min + delta
-
-    max_volts  = []
-    
-#    plt.axvline(local_min)
-    while local_max <= global_max:
-        local_list = []
-        for i in time:
-            if i >= local_min and i <= local_max:
-                ind      = list(time).index(i)
-                volt_val = data[ind, 0]
-                local_list.append(volt_val)
-        
-        max_value = max(local_list)
-        max_volts.append(max_value)
-        
-#        plt.axvline(local_max)
-        local_min += delta
-        local_max += delta
-
-    plt.plot(time, volt, form)
-    plt.title('Title')
-    plt.xlabel('Time (s)')
-    plt.ylabel('INSERT LABEL (mV)')
-    plt.show()
