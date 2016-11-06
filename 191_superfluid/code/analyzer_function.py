@@ -9,18 +9,6 @@ os.chdir("../data/")
 ### BEGIN DATASETS ###
 ######################
 '''
-SECOND SOUND
-'''
-ss_run_01 = np.genfromtxt('ss_run_01.txt')
-ss_run_02 = np.genfromtxt('ss_run_02.txt')
-ss_run_03 = np.genfromtxt('ss_run_03.txt')
-ss_run_04 = np.genfromtxt('ss_run_04.txt')
-ss_run_05 = np.genfromtxt('ss_run_05.txt')
-ss_run_06 = np.genfromtxt('ss_run_06.txt')
-ss_run_07 = np.genfromtxt('ss_run_07.txt')
-ss_run_08 = np.genfromtxt('ss_run_08.txt')
-
-'''
 HEAT CAPACITY
 '''
 cali_data = np.genfromtxt('cali_new.txt', delimiter=',', skip_header=1)
@@ -64,7 +52,7 @@ SECOND SOUND
 def PTconverter(ls):
     temp = np.array([])
     for i in range(len(ls)):
-        np.append(temp, converter(ls[i], 'PT'))
+        temp = np.append(temp, converter(ls[i], 'PT'))
 
     return temp
 
@@ -199,16 +187,16 @@ temp_mTorr = temperature[:, 0]
 temp_mmHg  = temp_mTorr / 1000
 temp_K     = temperature[:, 1]
 
-plt.plot(temp_mmHg, temp_K, 'g')
-plt.show()
+#plt.plot(temp_mmHg, temp_K, 'g')
+#plt.show()
 
 # Calibration data plot
 mmHg = cali_data[:, 0]
 V1   = cali_data[:, 1]
 V2   = cali_data[:, 2]
 
-plt.plot(V2, mmHg, 'ro')
-plt.show()
+#plt.plot(V2, mmHg, 'ro')
+#plt.show()
 
 #print("The ratio of V2:V1 without taking offset into account is: {} ").format(V2 / V1)
 
