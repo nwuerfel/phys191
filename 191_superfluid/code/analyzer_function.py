@@ -24,7 +24,7 @@ a_run_01 = np.genfromtxt('a_run_01.txt')
 a_run_02 = np.genfromtxt('a_run_02.txt')
 a_run_03 = np.genfromtxt('a_run_03.txt')
 
-he_run_01 = np.genfromtxt('he_run_01.txt') 
+he_run_01 = np.genfromtxt('manual_run.txt') 
 
 b_l_a_run_01 = np.genfromtxt('he_below_l_a_run_01.txt')
 b_l_a_run_02 = np.genfromtxt('he_below_l_a_run_02.txt')

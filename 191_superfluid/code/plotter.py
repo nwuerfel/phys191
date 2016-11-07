@@ -3,6 +3,8 @@ import os
 # Changes working directory to /data to access datasets
 os.chdir("../data/")
 
+f = open('manual_run.txt','w+')
+
 '''
 a_run_01 = np.genfromtxt('a_run_01.txt')
 a_run_02 = np.genfromtxt('a_run_02.txt')
@@ -24,7 +26,7 @@ import matplotlib.mlab as mlab
 import matplotlib.cbook as cbook
 import numpy as np
 
-data = np.genfromtxt('he_below_l_a_run_02.txt')
+data = np.genfromtxt('he_run_01.txt')
 
 def fmt(x, y):
     return 'x: {x:0.6f}\ny: {y:0.6f}'.format(x = x, y = y)
@@ -98,6 +100,8 @@ class DataCursor(object):
             annotation.xy = x, y
             annotation.set_text(self.formatter(x, y))
             annotation.set_visible(True)
+            f.write('%f %f\n'%(x,y))
+            f.flush()
             event.canvas.draw()
 
 x = data[:, 2]
