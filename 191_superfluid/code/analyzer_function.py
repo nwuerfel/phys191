@@ -45,7 +45,7 @@ SECOND SOUND
 def PTconverter(ls):
     temp = np.array([])
     for i in range(len(ls)):
-        np.append(temp, converter(ls[i], 'PT'))
+        temp = np.append(temp, converter(ls[i], 'PT'))
 
     return temp
 
@@ -253,15 +253,20 @@ temp_mTorr = temperature[:, 0]
 temp_mmHg  = temp_mTorr / 1000
 temp_K     = temperature[:, 1]
 
-plt.plot(temp_mmHg, temp_K, 'g')
-plt.show()
+#plt.plot(temp_mmHg, temp_K, 'g')
+#plt.show()
 
 # Calibration data plot
 mmHg = cali_data[:, 0]
 V1   = cali_data[:, 1]
 V2   = cali_data[:, 2]
 
+<<<<<<< HEAD
 temper = list_converter(mmHg, 1)
+=======
+#plt.plot(V2, mmHg, 'ro')
+#plt.show()
+>>>>>>> b6a9dd69a901a0ecd67e63ac59877839d7e416c4
 
 plt.plot(V1, temper, 'bo')
 plt.show()
