@@ -9,24 +9,12 @@ os.chdir("../data/")
 ### BEGIN DATASETS ###
 ######################
 '''
-SECOND SOUND
-'''
-ss_run_01 = np.genfromtxt('ss_run_01.txt')
-ss_run_02 = np.genfromtxt('ss_run_02.txt')
-ss_run_03 = np.genfromtxt('ss_run_03.txt')
-ss_run_04 = np.genfromtxt('ss_run_04.txt')
-ss_run_05 = np.genfromtxt('ss_run_05.txt')
-ss_run_06 = np.genfromtxt('ss_run_06.txt')
-ss_run_07 = np.genfromtxt('ss_run_07.txt')
-ss_run_08 = np.genfromtxt('ss_run_08.txt')
-
-'''
 HEAT CAPACITY
 '''
 cali_data = np.genfromtxt('cali_new.txt', delimiter=',', skip_header=1)
 temperature = np.genfromtxt('temperature.txt')
 
-drun_01 = np.genfromtxt('run_01.txt')
+run_01 = np.genfromtxt('run_01.txt')
 run_02 = np.genfromtxt('run_02.txt')
 run_03 = np.genfromtxt('run_03.txt')
 run_04 = np.genfromtxt('run_04.txt')
@@ -36,14 +24,6 @@ a_run_01 = np.genfromtxt('a_run_01.txt')
 a_run_02 = np.genfromtxt('a_run_02.txt')
 a_run_03 = np.genfromtxt('a_run_03.txt')
 
-"""
-# DO NOT USE THESE
-a_run_04 = np.genfromtxt('a_run_04.txt')
-a_run_05 = np.genfromtxt('a_run_05.txt')
-a_run_06 = np.genfromtxt('a_run_06.txt')
-a_run_07 = np.genfromtxt('a_run_07.txt')
-"""
-
 he_run_01 = np.genfromtxt('he_run_01.txt') 
 
 b_l_a_run_01 = np.genfromtxt('he_below_l_a_run_01.txt')
@@ -51,6 +31,7 @@ b_l_a_run_02 = np.genfromtxt('he_below_l_a_run_02.txt')
 b_l_run_01   = np.genfromtxt('he_above_l_run_01.txt')
 
 a_l_a_run_01 = np.genfromtxt('he_above_l_a_run_01.txt')
+
 ######################
 #### END DATASETS ####
 ######################
@@ -75,12 +56,6 @@ def ppFinder(data):
     
     time = data[:, 2]
     volt = data[:, 0] * (1.662 / 0.16754) # This is in mV
-    plt.plot(time, volt, 'g')
-    plt.title('Title')
-    plt.xlabel('Time (s)')
-    plt.ylabel('INSERT LABEL (mV)')
-    plt.show()
-
     
     time_list = list(time)
     volt_list = list(volt)
@@ -109,9 +84,24 @@ def ppFinder(data):
         i += 1
             
     plateau = np.array(plateau)
+    '''
+    for i in plateau:
+        plt.axhline(i)
+    plt.axvline(data[h1, 2], c='r')
+    plt.axvline(data[l1, 2], c='r')
+    '''    
+    plt.plot(time, volt, 'g')
+    plt.show()
     
-    return plateau
+    #return plateau
 
+'''
+a1 = 1300
+a2 = a1 + 25
+
+ppFinder(a_run_02, 0, -1)
+ppFinder(a_run_02, a1, a2)
+'''
 def converter(num, con):
     
     if con == 'VP':
@@ -124,7 +114,7 @@ def converter(num, con):
         nlist = V1 - num
     
         for i in nlist:
-            if i > 0:
+            if i >= 0:
                 maxi_list.append(i)
             else:
                 mini_list.append(i)
@@ -152,11 +142,11 @@ def converter(num, con):
         nlist = temp_mmHg - num
     
         for i in nlist:
-            if i > 0:
+            if i >= 0:
                 maxi_list.append(i)
             else:
-                mini_list.append(i)
-    
+                mini_list.append(i)     
+        
         P_max = min(maxi_list) + num
         P_min = max(mini_list) + num
     
@@ -169,17 +159,79 @@ def converter(num, con):
     
         return K_min + slope * (num - P_min)
 
-def list_converter(ls):
+def list_converter(ls, ind=2):
     temp = np.array([])
-    for i in range(len(ls)):
-        np.append(temp, converter(converter(ls[i], 'VP'), 'PT'))
+    
+    if ind == 1:
+        for i in range(len(ls)):
+            temp = np.append(temp, converter(ls[i], 'PT'))
+
+    if ind == 2:
+        for i in range(len(ls)):
+            temp = np.append(temp, converter(converter(ls[i], 'VP'), 'PT'))
 
     return temp
 
-'''
+
 def pulseE(string):
+    
+    R = 0.945 * (10 ** 3)
+    
     if string == 'a_run_01':
-'''        
+        L = 310 * (10 ** -6)
+        V = 10
+    if string == 'a_run_02':
+        L = 703 * (10 ** -6)
+        V = 5
+    if string == 'a_run_03':
+        L = 3.22 * (10 ** -6)
+        V = 5
+    if string == 'a_run_05':
+        L = 398 * (10 ** -6)
+        V = 10
+    if string == 'he_below':
+        L = 47  * (10 ** -3)
+        V = 13.7
+    if string == 'he_above':
+        L = 47  * (10 ** -3)
+        V = 13.7
+    
+    return (V ** 2) * L / R
+    
+def Heat(ls, x):
+
+    C  = np.array([])
+    dE = pulseE(x)
+    dT = np.array([])
+    
+    list_length = len(ls)    
+    
+    i = 0
+    
+    while i+1 <= list_length-1:
+        dt = (ls[i+1] + ls[i]) / 2
+        c  = dE / (ls[i+1] - ls[i])
+        
+        C  = np.append(C, c)
+        dT = np.append(dT, dt)
+        
+        i += 1
+    
+    plt.plot(dT, C, 'bo')
+    plt.show()
+    
+    return np.array([dT, C])
+
+plats    = np.genfromtxt('a_run_05_plateaus.txt')
+plats_02 = np.genfromtxt('he_below_l_a_run_02_plateaus.txt')
+plats_03 = np.genfromtxt('he_above_l_a_run_01_plateaus.txt')
+
+true_plats = plats_03[3:, 1] * (1.662 / 0.16754)
+
+plat_temps = list_converter(true_plats)
+
+Heat(plat_temps, 'he_below')
+
 #######################
 #### END FUNCTIONS ####
 #######################
@@ -194,6 +246,8 @@ SECOND SOUND
 '''
 HEAT CAPCITY
 '''
+
+'''
 # Temperature (K) v. Pressure (mTorr)
 temp_mTorr = temperature[:, 0]
 temp_mmHg  = temp_mTorr / 1000
@@ -207,9 +261,13 @@ mmHg = cali_data[:, 0]
 V1   = cali_data[:, 1]
 V2   = cali_data[:, 2]
 
-plt.plot(V2, mmHg, 'ro')
-plt.show()
+temper = list_converter(mmHg, 1)
 
+plt.plot(V1, temper, 'bo')
+plt.show()
+plt.plot(V2, temper, 'ro')
+plt.show()
+'''
 #print("The ratio of V2:V1 without taking offset into account is: {} ").format(V2 / V1)
 
 ###################
