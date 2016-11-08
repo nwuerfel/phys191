@@ -26,7 +26,7 @@ import matplotlib.mlab as mlab
 import matplotlib.cbook as cbook
 import numpy as np
 
-data = np.genfromtxt('he_run_01.txt')
+data = np.genfromtxt('a_run_06.txt')
 
 def fmt(x, y):
     return 'x: {x:0.6f}\ny: {y:0.6f}'.format(x = x, y = y)
@@ -101,7 +101,6 @@ class DataCursor(object):
             annotation.set_text(self.formatter(x, y))
             annotation.set_visible(True)
             f.write('%f %f\n'%(x,y))
-            f.flush()
             event.canvas.draw()
 
 x = data[:, 2]
@@ -112,3 +111,4 @@ ax = fig.add_subplot(1, 1, 1)
 scat = ax.scatter(x, y)
 DataCursor(scat, x, y)
 plt.show()
+f.close()

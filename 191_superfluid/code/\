@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-import junk 
 
 # Changes working directory to /data to access datasets
 os.chdir("../data/")
@@ -191,8 +190,8 @@ def pulseE(string):
         L = 398 * (10 ** -6)
         V = 10
     if string == 'a_run_06':
-        L = 210 * (10 ** -6) 
-        V = 13.5
+        L = 398 * (10 ** -6) 
+        V = 1-
     if string == 'he_below':
         L = 47  * (10 ** -3)
         V = 13.7
@@ -231,52 +230,16 @@ addendum_plats = np.genfromtxt('a_run_06_plat.txt')
 plats_02 = np.genfromtxt('he_below_l_a_run_02_plateaus.txt')
 plats_03 = np.genfromtxt('he_above_l_a_run_01_plateaus.txt')
 plats_04 = np.genfromtxt('he_run_1_pointer.txt')
+print plats_03
+print '.............................................\n'
+print plats_04
 
-he_true_plats = plats_04[3:, 1] * (1.662 / 0.16754)
-addendum_true_plats = addendum_plats[3:,1] * (1.662/0.16754)
+#true_plats = plats_04[3:, 1] * (1.662 / 0.16754)
+true_plats = addendum_plats[3:,1] * (1.662/0.16754)
 
-he_plat_temps = list_converter(he_true_plats)
-addendum_plat_temps = list_converter(addendum_true_plats)
+plat_temps = list_converter(true_plats)
 
-addendum_data = Heat(addendum_plat_temps, 'a_run_06')
-he_data = Heat(he_plat_temps, 'he_below')
-
-# iter over he data, getting the corresponding addendum vals and subtracting
-# slow but who gives a fuck
-
-# need to only choose temp data in helium measurement we have in our addendum
-
-addendum_max_t = np.max(addendum_data[0])
-addendum_min_t = np.min(addendum_data[0])
-
-he_temp_data = he_data[0,:]
-he_hcap_data = he_data[1,:]
-
-# garbage bullshit code fucking sux
-he_min_t = np.min(np.where(he_data[0] >= addendum_min_t)[0])
-he_max_t = np.max(np.where(he_data[0] <= addendum_max_t)[0])
-
-he_temp_data_restricted = he_temp_data[he_min_t:he_max_t]
-he_hcap_data_restricted = he_hcap_data[he_min_t:he_max_t]
-
-print 'lost %d points' % (len(he_temp_data)-len(he_temp_data_restricted))
-
-final = np.array([])
-for index, data in enumerate(he_temp_data_restricted):
-    #print 'finding heat cap of addendum at temperature: %f' %data
-    addendum_val = junk.subtract_addendum(addendum_data,data)
-    #print 'addendum cap at %f: %f' % (data, addendum_val)
-    final = np.append(final, he_hcap_data_restricted[index] - addendum_val)
-
-#print 'before subtraction:'
-#print he_hcap_data_restricted
-#print 'after subtraction:'
-#print final
-
-plt.figure()
-plt.plot(he_temp_data_restricted, he_hcap_data_restricted, c='blue', marker='o')
-plt.plot(he_temp_data_restricted, final, c='red', marker='o') 
-plt.show()
+Heat(plat_temps, 'he_below')
 
 #######################
 #### END FUNCTIONS ####
