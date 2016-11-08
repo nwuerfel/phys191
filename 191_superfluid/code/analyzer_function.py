@@ -226,7 +226,10 @@ plats    = np.genfromtxt('a_run_05_plateaus.txt')
 plats_02 = np.genfromtxt('he_below_l_a_run_02_plateaus.txt')
 plats_03 = np.genfromtxt('he_above_l_a_run_01_plateaus.txt')
 
-true_plats = plats_03[3:, 1] * (1.662 / 0.16754)
+plats_04 = np.genfromtxt('he_run_1_pointer.txt')
+plats_05 = np.genfromtxt('manual_run.txt')
+
+true_plats_03 = plats_03[:, 1] * (1.662 / 0.16754)
 
 plat_temps = list_converter(true_plats)
 

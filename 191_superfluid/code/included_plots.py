@@ -82,20 +82,47 @@ def list_converter(ls, ind=2):
 ### Calibration Plot ###
 ########################
 
-P  = cali_data[:, 0]
-T  = list_converter(P, 1)
-V1 = cali_data[:, 1]
-V2 = cali_data[:, 2]
+P   = cali_data[:, 0]
+T   = list_converter(P, 1)
+V1  = cali_data[:, 1]
+V2  = cali_data[:, 2]
+V_r = V2 / V1
+avg_r = np.average(V_r)
 
-fig, ax1 = plt.subplots()
-
+print avg_r, 1.957 / 1.013
 # These are in unitless percentages of the figure size. (0,0 is bottom left)
-left, bottom, width, height = [0.25, 0.6, 0.2, 0.2]
-ax2 = fig.add_axes([left, bottom, width, height])
 
-ax1.plot(V1, V2, color='red')
-ax2.plot(V1, V2, color='green')
+def cali_plot_new():
+    
+    size  = 16 
+    size1 = 16
+    
+    left, bottom, width, height = [0.72, 0.4, 0.2, 0.2]
+    
+    fig, ax  = plt.subplots()
+    ax1 = fig.add_axes([left, bottom, width, height])
+    ax1.set_xlabel('$V_1$', fontsize=size1)
+    ax1.set_ylabel('$V_2$', fontsize=size1)
+    
+    ax1.plot(V1, V2, color='purple')   
+    ax1.set_title('INSERT BETTER NAME')
+    
+    ax.plot(V1, T, 'bo', label='$I_1 : 1.013 \mu A$')
+    ax.plot(V2, T, 'ro', label='$I_2 : 1.957 \mu A$')
+    ax.set_title('Calibration Plot', fontsize=size+6)
+    ax.set_xlabel('Voltage (mV)', fontsize=size)
+    ax.set_xlim([0, 21])
+    ax.set_ylabel('Temperature (K)', fontsize=size)
+    ax.legend(loc=0, prop={'size':15}, numpoints=1)
+    
+    plt.tight_layout()
+    plt.savefig('calibration_curve.pdf')
 
+z = np.polyfit(V1, T, 8)
+p = np.poly1d(z)
+
+plt.plot(V1, T)
+plt.plot(V1, p(V1))
 plt.show()
 
 '''
