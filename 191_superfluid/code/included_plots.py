@@ -1,7 +1,9 @@
+from scipy import stats
+
+import junk
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-import junk
 
 # Changes working directory to /data to access datasets
 os.chdir("../data/")
@@ -139,36 +141,39 @@ P   = cali_data[:, 0]
 T   = list_converter(P, 1)
 V1  = cali_data[:, 1]
 V2  = cali_data[:, 2]
-V_r = V2 / V1
-avg_r = np.average(V_r)
 
-print avg_r, 1.957 / 1.013
+ratio = 1.957 / 1.013
+
+slope, intercept, r_value, p_value, std_err = stats.linregress(V1,V2)
+
+size  = 14
+size1 = 14
 
 def cali_plot():
     
-    size  = 16 
-    size1 = 16
-    
-    left, bottom, width, height = [0.72, 0.4, 0.2, 0.2]
+    left, bottom, width, height = [0.69, 0.38, 0.25, 0.25]
     
     fig, ax  = plt.subplots()
     ax1 = fig.add_axes([left, bottom, width, height])
-    ax1.set_xlabel('$V_1$', fontsize=size1)
-    ax1.set_ylabel('$V_2$', fontsize=size1)
+    ax1.set_xlabel('$V_1$ (mV)', fontsize=size1)
+    ax1.set_ylabel('$V_2$ (mV)', fontsize=size1)
     
-    ax1.plot(V1, V2, color='purple')   
-    ax1.set_title('INSERT BETTER NAME')
+    ax1.plot(V1, V2, color='purple')
     
     ax.plot(V1, T, 'bo', label='$I_1 : 1.013 \mu A$')
     ax.plot(V2, T, 'ro', label='$I_2 : 1.957 \mu A$')
     ax.set_title('Calibration Plot', fontsize=size+6)
     ax.set_xlabel('Voltage (mV)', fontsize=size)
     ax.set_xlim([0, 21])
+    ax.tick_params(axis='x', labelsize=13)
+    ax.tick_params(axis='y', labelsize=13)
     ax.set_ylabel('Temperature (K)', fontsize=size)
     ax.legend(loc=0, prop={'size':15}, numpoints=1)
     
     plt.tight_layout()
     plt.savefig('calibration_curve.pdf')
+
+#cali_plot()
 
 plats_04       = np.genfromtxt('he_run_1_pointer.txt')
 addendum_plats = np.genfromtxt('a_run_06_plat.txt')
@@ -201,28 +206,29 @@ def lambda_point():
         addendum_val = junk.subtract_addendum(addendum_data, data)
     #print 'addendum cap at %f: %f' % (data, addendum_val)
         final = np.append(final, he_hcap_data_restricted[index] - addendum_val)
-
+    '''
     plt.plot(he_temp_data_restricted, he_hcap_data_restricted, 'bo')
     plt.show()
-    plt.plot(he_temp_data_restricted, final, 'ro') 
-    plt.show()
+    '''    
+    plt.plot(he_temp_data_restricted, final, 'bo')
+    plt.title('Heat Capacity v. Temperature', fontsize=size+6)
+    plt.xticks(fontsize=size)
+    plt.xlabel('Temperature (K)', fontsize=size)
+    plt.yticks(fontsize=size)
+    plt.ylabel('Heat Capacity (J/K)', fontsize=size)
+    
+    plt.tight_layout()
+    plt.savefig('heat_capacity.pdf')
 
 lambda_point()
 '''
-def cali_plot():
-    size = 16
-    
-    plt.plot(V1, T, 'ro', label='1.013 uA')
-    plt.plot(V2, T, 'bo', label='1.957 uA')
-    plt.title('Calibration Plot', fontsize=size+6)
-    plt.xlabel('Voltage (mV)', fontsize=size)
-    plt.xlim([0, 21])
-    plt.xticks(fontsize=15)    
-    plt.ylabel('Temperature (K)', fontsize=size)
-    plt.yticks(fontsize=15)
-    plt.legend(loc=0, prop={'size':15}, numpoints=1)
-    plt.tight_layout()
-    plt.savefig('calibration_curve.pdf')
-    
-cali_plot()
+    ax.plot(V1, T, 'bo', label='$I_1 : 1.013 \mu A$')
+    ax.plot(V2, T, 'ro', label='$I_2 : 1.957 \mu A$')
+    ax.set_title('Calibration Plot', fontsize=size+6)
+    ax.set_xlabel('Voltage (mV)', fontsize=size)
+    ax.set_xlim([0, 21])
+    ax.tick_params(axis='x', labelsize=13)
+    ax.tick_params(axis='y', labelsize=13)
+    ax.set_ylabel('Temperature (K)', fontsize=size)
+    ax.legend(loc=0, prop={'size':15}, numpoints=1)
 '''
