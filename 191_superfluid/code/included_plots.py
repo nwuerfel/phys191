@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import junk
 
 # Changes working directory to /data to access datasets
 os.chdir("../data/")
@@ -78,8 +79,60 @@ def list_converter(ls, ind=2):
 
     return temp
 
+def Heat(ls, x):
+
+    C  = np.array([])
+    dE = pulseE(x)
+    dT = np.array([])
+    
+    list_length = len(ls)    
+    
+    i = 0
+    
+    while i+1 <= list_length-1:
+        dt = (ls[i+1] + ls[i]) / 2
+        c  = dE / (ls[i+1] - ls[i])
+        
+        C  = np.append(C, c)
+        dT = np.append(dT, dt)
+        
+        i += 1
+    '''
+    plt.plot(dT, C, 'bo')
+    plt.show()
+    plt.plot(dT, C, 'b')
+    plt.show()
+    '''
+    
+    return np.array([dT, C])
+
+def pulseE(string):
+    
+    R = 0.945 * (10 ** 3)
+    
+    if string == 'a_run_01':
+        L = 310 * (10 ** -6)
+        V = 10
+    if string == 'a_run_02':
+        L = 703 * (10 ** -6)
+        V = 5
+    if string == 'a_run_03':
+        L = 3.22 * (10 ** -6)
+        V = 5
+    if string == 'a_run_05':
+        L = 398 * (10 ** -6)
+        V = 10
+    if string == 'a_run_06':
+        L = 210 * (10 ** -6) 
+        V = 13.5
+    if string == 'he':
+        L = 47  * (10 ** -3)
+        V = 13.7
+    
+    return (V ** 2) * L / R
+
 ########################
-### Calibration Plot ###
+######### Plot #########
 ########################
 
 P   = cali_data[:, 0]
@@ -90,9 +143,8 @@ V_r = V2 / V1
 avg_r = np.average(V_r)
 
 print avg_r, 1.957 / 1.013
-# These are in unitless percentages of the figure size. (0,0 is bottom left)
 
-def cali_plot_new():
+def cali_plot():
     
     size  = 16 
     size1 = 16
@@ -118,13 +170,44 @@ def cali_plot_new():
     plt.tight_layout()
     plt.savefig('calibration_curve.pdf')
 
-z = np.polyfit(V1, T, 8)
+plats_04       = np.genfromtxt('he_run_1_pointer.txt')
+addendum_plats = np.genfromtxt('a_run_06_plat.txt')
+
+he_true_plats       = plats_04[3:, 1] * (1.662 / 0.16754)
+addendum_true_plats = addendum_plats[3:,1] * (1.662/0.16754)
+
+z = np.polyfit(V1, T, 12)
 p = np.poly1d(z)
 
-plt.plot(V1, T)
-plt.plot(V1, p(V1))
-plt.show()
+def lambda_point():
+    he_data       = Heat(p(he_true_plats), 'he')
+    addendum_data = Heat(p(addendum_true_plats), 'a_run_06')
+    
+    addendum_max_t = np.max(addendum_data[0])
+    addendum_min_t = np.min(addendum_data[0])
+    
+    he_temp_data = he_data[0,:]
+    he_hcap_data = he_data[1,:]
+    
+    he_min_t = np.min(np.where(he_data[0] >= addendum_min_t)[0])
+    he_max_t = np.max(np.where(he_data[0] <= addendum_max_t)[0])
 
+    he_temp_data_restricted = he_temp_data[he_min_t:he_max_t]
+    he_hcap_data_restricted = he_hcap_data[he_min_t:he_max_t]
+    
+    final = np.array([])
+    for index, data in enumerate(he_temp_data_restricted):
+    #print 'finding heat cap of addendum at temperature: %f' %data
+        addendum_val = junk.subtract_addendum(addendum_data, data)
+    #print 'addendum cap at %f: %f' % (data, addendum_val)
+        final = np.append(final, he_hcap_data_restricted[index] - addendum_val)
+
+    plt.plot(he_temp_data_restricted, he_hcap_data_restricted, 'bo')
+    plt.show()
+    plt.plot(he_temp_data_restricted, final, 'ro') 
+    plt.show()
+
+lambda_point()
 '''
 def cali_plot():
     size = 16
