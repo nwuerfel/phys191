@@ -4,9 +4,9 @@ import os
 from analyzer_function import PTconverter
 
 data_Dir = '../data/ss_runs/'
-pressures = np.array([12.7, 7.1, 10.8, 17, 21.5, 26, 30, 35])
-distance_uncertainty = 0.1
-time_uncertainty = 1
+pressures = np.array([12.5, 7.2, 10.8, 17, 21.5, 26, 30, 35])
+distance_uncertainty = 0.5
+time_uncertainty = 0.001
 
 def second_sound():
 
@@ -21,6 +21,15 @@ def second_sound():
             continue
 
         print 'Doing the data dance: %s' % file 
+    
+        # noticed different results on eugene's computer
+        # this was a consequence of his file order being different
+        # proper check should extract the run from the filename
+        # then index into the pressure array to get the pressure
+        # we abuse the name convention
+        
+        temp_index = int(file[7:-4])-1
+        print 'Temp index: %d' % temp_index
 
         data = np.genfromtxt(data_Dir + file)
 
@@ -39,7 +48,7 @@ def second_sound():
         total_uncertainty = np.sqrt(np.std(vel)**2 + mean_uncertainty**2)
 
         # janky fucking shit
-        vel_Data[j,0] = temperatures[j]
+        vel_Data[j,0] = temperatures[temp_index]
         vel_Data[j,1] = np.mean(vel)
         vel_Data[j,2] = total_uncertainty 
         j = j + 1
@@ -59,7 +68,7 @@ def second_sound():
     ax = plt.subplot()
 
     for label in (ax.get_xticklabels() + ax.get_yticklabels()):
-        label.set_fontsize(18)
+        label.set_fontsize(20)
 
     # setup the function we're comparing to
     plt.plot(x,y,linewidth=2, c='blue')
@@ -72,4 +81,9 @@ def second_sound():
     plt.tight_layout() 
     plt.show()
     
+    print 'temperatures:'
+    print vel_Data[:,0]
+    print 'velocity:'
+    print vel_Data[:,1]
+
     return vel_Data    
